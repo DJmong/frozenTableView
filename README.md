@@ -10,6 +10,7 @@ I made a frozen Column Table
 
 
 >구조 설명
+
 ![frozen](https://user-images.githubusercontent.com/49215689/229468626-16a7e78d-7e20-4166-87c2-f767f629d7a8.png)
 - 동일한 Model 을 공유하는 TableView 2개를 생성
 - 고정할 Column 값 만큼을 TableView 1 에서 출력
@@ -17,6 +18,8 @@ I made a frozen Column Table
 - TableView 1 의 HorizontalScrollBar 비활성화
 - TableView 2 의 HorizontalScrollBar 활성화
 - TableView 2 ScrollBar만 사용할 수 있으므로 TableView 1의 Column은 변하지 않음
+
+>동작
 
 ![frozenColumn](https://user-images.githubusercontent.com/49215689/229465986-acf67010-df9f-4c17-b598-f052cb0f0f94.gif)
 
