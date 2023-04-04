@@ -10,12 +10,22 @@ frozenTableView::frozenTableView(QWidget *parent):
 {
     m_frozenView = new QTableView(this);
 
-    QHeaderView *header = verticalHeader();
-    header->hide();
+    QHeaderView *vHeader = verticalHeader();
+    vHeader->hide();
     connect(horizontalHeader(), &QHeaderView::sectionResized, this, &frozenTableView::updateSectionWidth);
     connect(verticalScrollBar(), &QAbstractSlider::valueChanged, m_frozenView->verticalScrollBar(), &QAbstractSlider::setValue);
     connect(m_frozenView->verticalScrollBar(), &QAbstractSlider::valueChanged, verticalScrollBar(), &QAbstractSlider::setValue);
+    QHeaderView *hHeader = horizontalHeader();
 
+    setStyleSheet("QTableView {background-color:green}"
+                  "QTableView::item {"
+                  "height : 50px};"
+                  "border : 1px");
+    hHeader->setSectionsMovable(false);
+    hHeader->setSectionsClickable(false);
+    hHeader->setStretchLastSection(false);
+    hHeader->setSectionResizeMode(QHeaderView::Fixed);
+    initFrozenView();
 }
 
 frozenTableView::~frozenTableView()
@@ -35,9 +45,7 @@ void frozenTableView::initFrozenView()
     m_frozenView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_frozenView->verticalHeader()->hide();
 
-    //set model
-    m_frozenView->setModel(model());    
-    m_frozenView->setSelectionModel(selectionModel());
+
     //disable focus, resize, selection
     m_frozenView->setFocusPolicy(Qt::NoFocus);
     header->setSectionResizeMode(QHeaderView::Fixed);
@@ -59,8 +67,6 @@ void frozenTableView::initFrozenView()
     setHorizontalScrollMode(ScrollPerPixel);
     setVerticalScrollMode(ScrollPerPixel);
     m_frozenView->setVerticalScrollMode(ScrollPerPixel);
-    updateFrozenViewGeometry();
-    updateFrozenColumn();
 }
 
 void frozenTableView::updateFrozenColumn()
@@ -82,18 +88,9 @@ void frozenTableView::resizeEvent(QResizeEvent *event)
 void frozenTableView::setModel(QAbstractItemModel *model)
 {
     QTableView::setModel(model);
-    QHeaderView *header = horizontalHeader();
-
-    setStyleSheet("QTableView {background-color:green}"
-                  "QTableView::item {"
-                  "height : 50px};"
-                  "border : 1px");
-    header->setSectionsMovable(false);
-    header->setSectionsClickable(false);
-    header->setStretchLastSection(false);
-    header->setSectionResizeMode(QHeaderView::Fixed);
-
-    initFrozenView();
+    //set model
+    m_frozenView->setModel(model);
+    m_frozenView->setSelectionModel(selectionModel());
 }
 
 QModelIndex frozenTableView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -121,17 +118,11 @@ void frozenTableView::updateFrozenViewGeometry()
     m_frozenView->setGeometry(x, y, w, h);
 }
 
-void frozenTableView::updateFrozenView()
-{
-    updateFrozenColumn();
-    updateFrozenViewGeometry();
-}
-
 void frozenTableView::paintEvent(QPaintEvent *event)
 {
     QTableView::paintEvent(event);
-    updateFrozenView();
-    qDebug() << QString("original : %1, frozen : %2").arg(columnWidth(0)).arg(m_frozenView->columnWidth(0));
+    updateFrozenColumn();
+    updateFrozenViewGeometry();
 }
 
 void frozenTableView::updateSectionWidth(int logicalIndex, int oldSize, int newSize)
@@ -149,5 +140,5 @@ int frozenTableView::lastFrozenColumn() const
 void frozenTableView::setLastFrozenColumn(int lastFrozenColumn)
 {
     m_lastFrozenColumn = lastFrozenColumn;
-    updateFrozenView();
+    update();
 }

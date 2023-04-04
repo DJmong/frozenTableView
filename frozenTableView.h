@@ -23,7 +23,6 @@ private:
     QTableView *m_frozenView;
     void initFrozenView();
     void updateFrozenViewGeometry();
-    void updateFrozenView();
     void updateFrozenColumn();
 private slots:
     void updateSectionWidth(int logicalIndex, int oldSize, int newSize);
